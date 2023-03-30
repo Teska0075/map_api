@@ -11,12 +11,12 @@ const getRestaurants = async (req, res) => {
 };
 
 const createRestaurants = async (req, res) => {
-  const { name, location, coordinates } = req.body;
+  const { name, long, lat } = req.body;
 
   try {
     const restaurants = await Restaurant.create({
       name,
-      location: { coordinates: [12, 13] },
+      location: { coordinates: [long, lat] },
     });
 
     res.status(200).json({ success: true, message: restaurants });
@@ -25,4 +25,15 @@ const createRestaurants = async (req, res) => {
   }
 };
 
-module.exports = { getRestaurants, createRestaurants };
+const deleteRestaurant = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const restaurants = await Restaurant.findByIdAndDelete(id);
+
+    res.status(200).json({ success: true, message: restaurants });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error });
+  }
+};
+
+module.exports = { getRestaurants, createRestaurants, deleteRestaurant };
