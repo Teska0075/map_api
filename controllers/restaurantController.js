@@ -36,4 +36,34 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
-module.exports = { getRestaurants, createRestaurants, deleteRestaurant };
+const getNearBranch = async (req, res) => {
+  console.log("POST");
+  const { lon, lat } = req.body;
+  const { distance } = req.query;
+
+  console.log("POS-LON", lon);
+  console.log("POS-LAT", lat);
+  console.log("POS-LAT", req.query);
+
+  try {
+    const branches = await Restaurant.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lon, lat] },
+          $maxDistance: distance,
+        },
+      },
+    });
+    res.status(200).json({ success: true, branches });
+  } catch (error) {
+    console.log("error", error);
+    res.status(400).json({ success: false, message: error });
+  }
+};
+
+module.exports = {
+  getRestaurants,
+  createRestaurants,
+  deleteRestaurant,
+  getNearBranch,
+};
